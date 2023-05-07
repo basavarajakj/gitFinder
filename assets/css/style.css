@@ -218,6 +218,70 @@
   #RESET
 \*-----------------------------------*/
 
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+li { list-style: none;}
+
+a,
+img,
+svg,
+span,
+input,
+button { display: block; }
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img { height: auto; }
+
+input,
+button {
+  background: none;
+  border: none;
+  font: inherit;
+}
+
+input { width: 100%; }
+
+button { cursor: pointer; }
+
+html {
+  font-size: var(--base-font-size);
+  -webkit-tap-highlight-color: transparent; /* for mobile browser */
+}
+
+body {
+  background: var(--background);
+  color: var(--on-background);
+  font-family: var(--font-primary);
+  font-size: var(--label-1);
+  font-weight: var(--weight-regular);
+  line-height: 20px;
+  letter-spacing: 0.2px;
+  min-height: 100vh;
+  min-height: 100dvh; /* for mobile browser*/
+  display: flex;
+  flex-direction: column;
+  padding-block: var(--header-hight) 16px;
+  height: 300vh;
+}
+
+
+::-webkit-scrollbar { width: 8px; }
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--surface-variant);
+  border-radius: var(--radius-pill);
+}
+
 
 
 
@@ -226,7 +290,9 @@
   #UTILITY
 \*-----------------------------------*/
 
+  .text-primary { color: var(--primary); }
 
+  .text-error { color: var(--error);}
 
 
 
@@ -234,9 +300,22 @@
   #REUSED STYLE
 \*-----------------------------------*/
 
+.container {
+  padding-inline: 16px;
+  max-width: 1280px;
+  width: 100%;
+  margin-inline: auto;
+}
 
-
-
+.material-symbols-rounded {
+  width: 1em;
+  height: 1em;
+  font-variation-settings: 
+  'FILL' 1,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24,;
+}
 
 /*-----------------------------------*\
   #COMPONENTS
@@ -244,7 +323,25 @@
 
 /* Icon button */
 
+.icon-btn {
+  background-color: var(--surface-variant);
+  min-width: 48px;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-circle);
+  border: 1px solid var(--surface-variant-outline);
+  display: grid;
+  place-items: center;
+  transition: var(--transition-short);
+  transition-property: background-color, border-color;
+}
 
+.icon-btn:where(:hover, :focus-visible):not(:active) {
+  background-color: var(--surface-variant-hover);
+  border-color: var(--surface-variant-outline-hover);
+}
+
+.icon-btn .material-symbols-rounded { color: var(--on-background);}
 /* Button */
 
 
@@ -256,7 +353,51 @@
 
 /* Search box */
 
+.search-box .leading-icon,
+.search-btn .label-1 {
+  display: none;
+}
 
+.search-box {
+  position: relative;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+.search-field {
+  height: 48px;
+  line-height: 48px;
+  background-color: var(--surface-variant);
+  padding-inline: 16px 64px;
+  border-radius: inherit;
+  outline: none;
+}
+
+.search-field:focus{
+  box-shadow: inset 0 0 0 2px var(--primary);
+}
+
+.search-field::placeholder { color: var(--alpha-60);}
+
+.search-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 48px;
+  background-color: var(--primary);
+  color: var(--white);
+  font-weight: var(--weight-medium);
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  transition: var(--transition-short);
+}
+
+.search-btn:where(:hover, :focus-visible):not(:active) {
+  background-color: var(--primary-hover);
+}
 /* Card */
 
 
@@ -277,6 +418,30 @@
 \*-----------------------------------*/
 
 
+.skip-to-content {
+  position: fixed;
+  top: 4px;
+  left: 4px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  background-color: var(--on-background);
+  padding-inline: 24px;
+  color: var(--background);
+  font-size: var(--label-1);
+  font-weight: var(--weight-medium);
+  border-radius: var(--radius-8);
+  outline-offset: 2px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.skip-to-content:focus-visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
 
 
 
@@ -284,10 +449,59 @@
   #HEADER
 \*-----------------------------------*/
 
+.header {
+  background-color: var(--background);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--header-hight);
+  display: flex;
+  align-items: center;
+  transition: background-color var(--transition-short);
+  z-index: 4;
+}
+
+.header.active {
+  background-color: var(--surface);
+}
+
+.header .container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  color: var(--on-background);
+  font-size: 26px;
+  font-weight: var(--weight-bold);
+  line-height: 26px;
+}
+
+.logo .text-primary { display: inline;}
 
 
+.header-search {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  flex-grow: 1;
+}
 
+.header:not(.search-active) .header-search { 
+  margin-inline-start: auto;
+}
 
+.header:not(.search-active) .search-box, 
+.header.search-active :where(.logo, .theme-btn),
+.search-toggler[aria-expanded="true"] .search-icon,
+.search-toggler[aria-expanded="false"] .close-btn,
+[data-theme="dark"] .theme-btn .moon-icon,
+[data-theme="light"] .theme-btn .sun-icon {
+  display: none;
+}
 /*-----------------------------------*\
   #PROFILE
 \*-----------------------------------*/
