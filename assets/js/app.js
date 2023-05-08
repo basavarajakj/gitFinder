@@ -6,7 +6,8 @@
 
 'use strict';
 
-import { fetchData } from './api.js'
+import { fetchData } from './api.js';
+import { numberTokilo } from './module.js';
 
 /**
  * Add eventlistener on multiple elements
@@ -129,7 +130,7 @@ $searchField.addEventListener('keydown', e => {
 
 const /** {NodeElement} */ $profileCard = document.querySelector('[data-profile-card]');
 const /** {NodeElement } */ $repoPanel = document.querySelector("[data-repo-panel]");
-const /** {NodeElement} */  $error = document.querySelector('[data-error]');
+const /** {NodeElement} */ $error = document.querySelector('[data-error]');
 
 window.updateProfile = function (profileURL) {
 
@@ -194,22 +195,24 @@ window.updateProfile = function (profileURL) {
     followingUrl = following_url.replace('{/other_user}', '');
 
     $profileCard.innerHTML = `
-      <figure class="${type === "User" ? "avatar-circle" : "avatar-rounded"} img-holder" style="--width: 280; --height: 280">
+      <figure class="${
+				type === 'User' ? 'avatar-circle' : 'avatar-rounded'
+			} img-holder" style="--width: 280; --height: 280">
         <img src="${avatar_url}" alt="${username}" width="280" height="280" class="img-cover">
       </figure>
 
-      ${ name ?
-        `<h1 class="title-2">${name}</h1>` : ""
-      }
+      ${name ? `<h1 class="title-2">${name}</h1>` : ''}
       
 
       <p class="username text-primary">${username}</p>
 
-      ${bio ? 
-        `<p class="bio">
+      ${
+				bio
+					? `<p class="bio">
           ${bio}
-        </p>` : ""
-      }
+        </p>`
+					: ''
+			}
       
       <a href="${githubPage}" target="_blank" class="btn btn-secondary">
         <span class="material-symbols-rounded" aria-hidden="true">open_in_new</span>
@@ -219,34 +222,43 @@ window.updateProfile = function (profileURL) {
 
       <ul class="profile-meta">
 
-        ${location ? 
-          `<li class="meta-item">
+        ${
+					location
+						? `<li class="meta-item">
             <span class="material-symbols-rounded" aria-hidden="true">location_on</span>
 
             <span class="meta-text">${location}</span>
-          </li>` : ""
-        }
+          </li>`
+						: ''
+				}
 
-        ${company ? 
-          `<li class="meta-item">
+        ${
+					company
+						? `<li class="meta-item">
             <span class="material-symbols-rounded" aria-hidden="true">apartment</span>
 
             <span class="meta-text">${company}</span>
-          </li>` : ""
-        }
+          </li>`
+						: ''
+				}
 
-        ${website ? 
-          ` <li class="meta-item">
+        ${
+					website
+						? ` <li class="meta-item">
             <span class="material-symbols-rounded" aria-hidden="true">captive_portal</span>
 
-            <a href="${website}" target="_blank" class="meta-text">${website.replace("https://", "")}</a>
-          </li>` : ""
-        }
+            <a href="${website}" target="_blank" class="meta-text">${website.replace(
+								'https://',
+								''
+						  )}</a>
+          </li>`
+						: ''
+				}
        
 
-        ${twitter_username ?
-        
-          `
+        ${
+					twitter_username
+						? `
             <li class="meta-item">
             <span class="icon">
                 <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -256,8 +268,9 @@ window.updateProfile = function (profileURL) {
 
           <a href="https://twitter.com/${twitter_username}" target="_blank" class="meta-text">@${twitter_username}</a>
         </li>
-          ` : ""
-        }
+          `
+						: ''
+				}
 
       </ul>
 
@@ -265,15 +278,15 @@ window.updateProfile = function (profileURL) {
       <ul class="profile-stats">
 
         <li class="stats-item">
-          <span class="body">${public_repos}</span> Repos
+          <span class="body">${numberTokilo(public_repos)}</span> Repos
         </li>
 
         <li class="stats-item">
-          <span class="body">${followers}</span> Followers
+          <span class="body">${numberTokilo(followers)}</span> Followers
         </li>
 
         <li class="stats-item">
-          <span class="body">${following}</span> Following
+          <span class="body">${numberTokilo(following)}</span> Following
         </li>
 
       </ul>
@@ -282,19 +295,24 @@ window.updateProfile = function (profileURL) {
         <p class="copyright">&copy; 2023 bassu</p>
       </div>
     `;
-  }, (error) => {
-    $error.style.display = 'gird';
+  }, () => {
+    $error.style.display = 'grid';
     document.body.style.overflowY = 'hidden';
     
     $error.innerHTML = `
       <div class="title-1">Oops! :(</div>
 
-      <p class="text">There is no account with this username yet.</p>
+      <p class="text">There is no account with <span class="error-username"> ${$searchField.value} </span>.</p>
     `;
   });
 }
 
 updateProfile(apiUrl);
+
+
+/**
+ * Repository
+ */
 
  // <article class="card repo-card">
     //   <div class="card-body">
