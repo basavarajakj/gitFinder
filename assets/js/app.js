@@ -194,6 +194,9 @@ window.updateProfile = function (profileURL) {
     followerUrl = followers_url;
     followingUrl = following_url.replace('{/other_user}', '');
 
+    updateRepository();
+
+
     $profileCard.innerHTML = `
       <figure class="${
 				type === 'User' ? 'avatar-circle' : 'avatar-rounded'
@@ -314,37 +317,315 @@ updateProfile(apiUrl);
  * Repository
  */
 
- // <article class="card repo-card">
-    //   <div class="card-body">
-    //     <a href="#" target="_blank" class="card-title">
-    //       <h3 class="title-3">youtube-lite</h3>
-    //     </a>
+let /** {Array} */ forkedRepos = [];
 
-    //     <p class="card-text">
-    //       Starter file for youtube clone
-    //     </p>
+const updateRepository = function () {
+  
+  fetchData(`${repoUrl}?sort=created&per_page=12`, function (data) {
+    
+    $repoPanel.innerHTML = ` <h2 class="sr-only">Repositories</h2>`;
+    forkedRepos = data.filter(item => /** {Boolean} */ item.fork);
 
-    //       <span class="badge">public</span>
-    //   </div>
+    const /** {Array} */ repositories = data.filter(i => !i.fork);
 
-    //   <div class="card-footer">
+    if (repositories.length) {
+			for (const repo of repositories) {
+				const {
+					name,
+					html_url,
+					description,
+					private: isPrivate,
+					language,
+					stargazers_count: stars_count,
+					forks_count,
+				} = repo;
 
-    //     <div class="meta-item">
-    //       <span class="material-symbols-rounded" aria-hidden="true">code_blocks</span>
-    //         <span class="span">CSS</span>
-    //     </div>
+				const /** {NodeElement} */ $repoCard =
+						document.createElement('article');
+				$repoCard.classList.add('card', 'repo-card');
 
-    //     <div class="meta-item">
-    //       <span class="material-symbols-rounded" aria-hidden="true">star_rate</span>
+				$repoCard.innerHTML = `
+          <div class="card-body">
 
-    //       <span class="span">23</span>
-    //     </div>
+            <a href="${html_url}" target="_blank" class="card-title">
+              <h3 class="title-3">${name}</h3>
+            </a>
 
-    //     <div class="meta-item">
-    //       <span class="material-symbols-rounded" aria-hidden="true">family_history</span>
+            ${
+							description
+								? `<p class="card-text">
+                ${description}
+              </p>`
+								: ''
+						}
+            
 
-    //       <span class="span">4</span>
-    //     </div>
+            <span class="badge">${isPrivate ? 'Private' : 'Public'}</span>
+          </div>
 
-    //   </div>
-    // </article>
+          <div class="card-footer">
+
+          ${
+						language
+							? `
+             <div class="meta-item">
+               <span class="material-symbols-rounded" aria-hidden="true">code_blocks</span>
+
+               <span class="span">${language}</span>
+            </div> `
+							: ''
+					}
+           
+            <div class="meta-item">
+              <span class="material-symbols-rounded" aria-hidden="true">star_rate</span>
+
+              <span class="span">${stars_count}</span>
+            </div>
+
+            <div class="meta-item">
+              <span class="material-symbols-rounded" aria-hidden="true">family_history</span>
+
+              <span class="span">${numberTokilo(forks_count)}</span>
+            </div>
+
+          </div>
+        `;
+
+				$repoPanel.appendChild($repoCard);
+			}
+    } else {
+      $repoPanel.innerHTML = `
+        <div class="error-content">
+
+          <div class="title-1">Oops! :(</div>
+
+          <p class="text">Doesn't have any public Repositories yet.</p>
+
+        </div>
+      `;
+		}
+
+  })
+}
+
+/**
+ * Forked repository
+ */
+
+const /** {NodeElement} */ $forkPanel = document.querySelector('[data-fork-panel]');
+const /** {NodeElement} */ $forkTabBtn = document.querySelector('[data-forked-tab-btn]');
+
+const updateForkRepo = function () {
+  
+  $forkPanel.innerHTML = `
+    <h2 class="sr-only">Forked Repositories</h2>
+  `;
+
+  if (forkedRepos.length) {
+		for (const repo of forkedRepos) {
+			const {
+				name,
+				html_url,
+				description,
+				private: isPrivate,
+				language,
+				stargazers_count: stars_count,
+				forks_count,
+			} = repo;
+
+			const /** {NodeElement} */ $forkCard = document.createElement('article');
+			$forkCard.classList.add('card', 'repo-card');
+
+			$forkCard.innerHTML = `
+          <div class="card-body">
+
+            <a href="${html_url}" target="_blank" class="card-title">
+              <h3 class="title-3">${name}</h3>
+            </a>
+
+            ${
+							description
+								? `<p class="card-text">
+                ${description}
+              </p>`
+								: ''
+						}
+            
+
+            <span class="badge">${isPrivate ? 'Private' : 'Public'}</span>
+          </div>
+
+          <div class="card-footer">
+
+          ${
+						language
+							? `
+             <div class="meta-item">
+               <span class="material-symbols-rounded" aria-hidden="true">code_blocks</span>
+
+               <span class="span">${language}</span>
+            </div> `
+							: ''
+					}
+           
+            <div class="meta-item">
+              <span class="material-symbols-rounded" aria-hidden="true">star_rate</span>
+
+              <span class="span">${stars_count}</span>
+            </div>
+
+            <div class="meta-item">
+              <span class="material-symbols-rounded" aria-hidden="true">family_history</span>
+
+              <span class="span">${numberTokilo(forks_count)}</span>
+            </div>
+
+          </div>
+        `;
+
+			$forkPanel.appendChild($forkCard);
+		}
+	} else {
+		$forkPanel.innerHTML = `
+        <div class="error-content">
+
+          <div class="title-1">Oops! :(</div>
+
+         <p class="text">Doesn't have any forked yet.</p>
+
+        </div>
+      `;
+	}
+
+
+}
+
+$forkTabBtn.addEventListener('click', updateForkRepo);
+
+
+/**
+ * Follower
+ */
+
+const /** {NodeElement} */ $followerTabBtn = document.querySelector('[ data-followers-tab-btn]');
+const /** { NodeElement} */ $followerPanel = document.querySelector('[data-follower-panel]');
+
+const updateFollower = function () {
+  
+  $followerPanel.innerHTML = `
+     <div class="card follower-skeleton">
+
+      <div class="skeleton avatar-skeleton"></div>
+      <div class="skeleton title-skeleton"></div>
+
+    </div>
+  `.repeat(12);
+
+  fetchData(followerUrl, function (data) {
+    
+    $followerPanel.innerHTML = `<h2 class="sr-only">Followers</h2>`;
+
+    if (data.length) {
+      for (const item of data) {
+        
+        const {
+          login: username,
+          avatar_url,
+          url
+        } = item;
+
+        const /** {NodeElement} */ $followingCard = document.createElement('article');
+
+        $followingCard.classList.add("card", "follower-card");
+
+        $followingCard.innerHTML = `
+          <figure class="avatar-circle img-holder">
+            <img src="${avatar_url}" width="56" height="56" loading="lazy" alt="${username}" class="img-cover">
+          </figure>
+
+          <h3 class="card-title">${username}</h3>
+
+          <button class="icon-btn" onClick="updateProfile(\'${url}\')" aria-label="Go to ${username} profile" >
+            <span class="material-symbols-rounded" aria-hidden="true">link</span>
+          </button>  
+        `;
+
+        $followerPanel.appendChild($followingCard)
+      }
+    } else {
+      $followerPanel.innerHTML = `
+        <div class="error-content">
+
+          <div class="title-1">Oops! :(</div>
+
+          <p class="text">Doesn't have any followers yet.</p>
+
+        </div>
+      `;
+    }
+  })
+};
+
+$followerTabBtn.addEventListener('click', updateFollower);
+
+
+/**
+ * Following
+ */
+
+const /** {NodeElement} */ $followingTabBtn = document.querySelector("[data-following-tab-btn]");
+const /** {NodeElement} */ $followingPanel = document.querySelector("[data-following-panel]");
+
+
+const updateFollowing = function () {
+  $followingPanel.innerHTML = `
+     <div class="card follower-skeleton">
+
+      <div class="skeleton avatar-skeleton"></div>
+      <div class="skeleton title-skeleton"></div>
+
+    </div>
+  `.repeat(12);
+
+  fetchData(followingUrl, function (data) {
+    
+    $followingPanel.innerHTML = `<h2 class="sr-only">Followers</h2>`;
+    
+    if (data.length) {
+			for (const item of data) {
+				const { login: username, avatar_url, url } = item;
+
+				const /** {NodeElement} */ $followingCard =
+						document.createElement('article');
+
+				$followingCard.classList.add('card', 'follower-card');
+
+				$followingCard.innerHTML = `
+          <figure class="avatar-circle img-holder">
+            <img src="${avatar_url}" width="56" height="56" loading="lazy" alt="${username}" class="img-cover">
+          </figure>
+
+          <h3 class="card-title">${username}</h3>
+
+          <button class="icon-btn" onClick="updateProfile(\'${url}\')" aria-label="Go to ${username} profile" >
+            <span class="material-symbols-rounded" aria-hidden="true">link</span>
+          </button>  
+        `;
+
+				$followingPanel.appendChild($followingCard);
+			}
+		} else {
+			$followingPanel.innerHTML = `
+        <div class="error-content">
+
+          <div class="title-1">Oops! :(</div>
+
+          <p class="text">Doesn't have any following yet.</p>
+
+        </div>
+      `;
+		}
+  })
+}
+
+$followingTabBtn.addEventListener('click', updateFollowing);
