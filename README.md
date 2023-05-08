@@ -1,7 +1,7 @@
 
-# Project Title
+# GitFinder
 
-A brief description of what this project does and who it's for
+GitFinder is a web application designed for developers to search and discover open-source repositories on GitHub. 
 
 ## Tech Stack
 
@@ -13,9 +13,9 @@ Insert gif or link to demo
 
 ## Features
 
-- Feature 1
-- Feature 2
-- Feature 3
+- The application is built using the GitHub API, which provides access to   millions of repositories and their associated metadata.
+- Once a user has found a repository they are interested in, they can view detailed information about the repository, including the number of stars, forks, and issues.
+- Users can also view the repository's code, README, and other documentation of  the application.
 
 ## Screenshots
 
@@ -26,7 +26,7 @@ Insert gif or link to demo
 Clone the project
 
 ```bash
-  git clone https://link-to-project
+  git clone https://github.com/Basavarajakjbasuu/gitFinder.git
 ```
 
 Go to the project directory
@@ -50,12 +50,9 @@ Open with live server
 
 ## Authors
 
-- [@codewithsadee](https://www.github.com/codewithsadee)
+- [@basavaraj](https://www.github.com/Basavarajakjbasuu)
 
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
-## Support
-
-For support, Join my [Patreon Comunity](https://www.patreon.com/codewithsadee/membership) or Subscribe My [YouTube Channel](https://youtube.com/@codewithsadee).
