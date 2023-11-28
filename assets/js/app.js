@@ -105,7 +105,7 @@ addEventOnElement($tabBtns, "keydown", function (e) {
 
 const /** {NodeElement} */ $searchSubmit = document.querySelector("[data-search-submit]");
 
-let /** {string} */ apiUrl = 'https://api.github.com/users/Basavarajakjbasuu';
+let /** {string} */ apiUrl = 'https://api.github.com/users/basavarajakj';
 let /** {string} */ repoUrl, followerUrl, followingUrl;
 
 const searchUser = function () {
